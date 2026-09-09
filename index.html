@@ -1070,6 +1070,17 @@ function commitPieces(list){
   list.forEach(function(o,i){ if(o.a!=null) assign[i]=o.a });
 }
 
+function setFiltersFor(st,cardValue){
+  var wasEdited=edited;
+  edited=true;
+  for(var k in sel) if(!filterLock[k]) sel[k].value='any';
+  applyFilters();
+  if(!filterLock.b){ sel.b.value=String(st.b); applyFilters() }
+  if(!filterLock.d){ sel.d.value=String(st.d); applyFilters() }
+  if(!filterLock.e){ sel.e.value=String(st.e); applyFilters() }
+  if(!filterLock.c){ sel.c.value=String(cardValue); applyFilters() }
+  edited=wasEdited;
+}
 function syncFiltersToStage(){
   var st=stageStats(), wasEdited=edited;
   edited=true;
@@ -1611,7 +1622,9 @@ function inspireLayout(){
     drawStage(); return;
   }
   edited=false; vIndex=pick; stageNote=''; drawStage();
-  syncFiltersToStage();
+  var st=stageStats();
+  var cardCount=Math.max(1, st.a - ((st.a>1 && Math.random()<0.5) ? 1 : 0));
+  setFiltersFor(st,cardCount);
   relocateAfterEdit();
   drawStage();
 }
