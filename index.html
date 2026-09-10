@@ -1233,7 +1233,7 @@ function drawPick(){
   var html='';
   for(var i=0;i<images.length;i++)
     html+='<button type="button" data-pick="'+images[i].id+'" title="'+
-          images[i].name.replace(/"/g,'')+'" style="background-image:url('+images[i].url+')"></button>';
+          esc(images[i].name)+'" style="background-image:url('+images[i].url+')"></button>';
   host.innerHTML=html; host.hidden=false;
 }
 document.getElementById('slot-pick').addEventListener('click',function(ev){
@@ -1267,7 +1267,8 @@ function drawActions(){
   });
   var lo=document.getElementById('a-lock'); if(lo) lo.addEventListener('click',function(){setLock(true)});
   var ul=document.getElementById('a-unlock'); if(ul) ul.addEventListener('click',function(){setLock(false)});
-  document.getElementById('a-none').addEventListener('click',function(){selSlots=[];drawStage()});
+  var dn=document.getElementById('a-none');
+  if(dn) dn.addEventListener('click',function(){selSlots=[];drawStage()});
 }
 
 function moveBetweenSlots(a,b){
@@ -1659,6 +1660,10 @@ function fillSlot(i,id){
   assign[i]={id:id,fit:defaultFit,lock:!!(assign[i]&&assign[i].lock)};
   return true;
 }
+function esc(t){
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 function releaseImage(im){ try{ URL.revokeObjectURL(im.url) }catch(e){} }
 function detachImage(id){
   for(var k in assign){
@@ -1673,7 +1678,7 @@ function drawTray(){
   for(var i=0;i<images.length;i++){
     var im=images[i];
     html+='<div class="chip'+(selImg===im.id?' sel':'')+'" draggable="true" data-id="'+im.id+'" '+
-          'title="'+im.name.replace(/"/g,'')+'" style="background-image:url('+im.url+')">'+
+          'title="'+esc(im.name)+'" style="background-image:url('+im.url+')">'+
           '<button class="x" type="button" data-del="'+im.id+'" aria-label="Remove image">\u00d7</button></div>';
   }
   var trayEl=document.getElementById('tray');
